@@ -1,6 +1,7 @@
 {
   "name": "ctx-camera",
   "version": "1.0.0",
+  "main": "ctx-camera.js",
   "scripts": {
     "demo": "budo --live --open demo.js"
   },
