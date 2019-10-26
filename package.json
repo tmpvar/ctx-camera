@@ -5,7 +5,7 @@
   "scripts": {
     "demo": "budo --live --open demo.js"
   },
-  "dependencies": {
+  "devDependencies": {
     "budo": "^10.0.3",
     "fc": "^1.5.2"
   }
