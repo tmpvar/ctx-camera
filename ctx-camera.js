@@ -1,6 +1,6 @@
 module.exports = createCamera
 
-function createCamera (ctx, eventContext, handlers) {
+function createCamera (ctx, eventContext, handlers, state) {
   eventContext = eventContext || window
   handlers = handlers || {}
   var canBeDirty = typeof ctx.dirty === 'function'
@@ -15,43 +15,47 @@ function createCamera (ctx, eventContext, handlers) {
     deltaPos: [0, 0],
     downPosition: [0, 0]
   }
-  var translation = [0, 0]
+  
   var frameSize = [
     eventContext.innerWidth,
     eventContext.innerHeight
   ]
-
-  var zoom = 1
+  
+  state = Object.assign({
+    translation: [0, 0],
+    zoom: 1
+  }, state)
 
   function begin () {
     ctx.save()
-    ctx.scale(zoom, zoom)
-    ctx.translate(translation[0], translation[1])
+    ctx.scale(state.zoom, state.zoom)
+    ctx.translate(state.translation[0], state.translation[1])
   }
 
   function end () {
     ctx.restore()
+    return state
   }
 
   function translateCamera (x, y) {
-    translation[0] += x
-    translation[1] += y
+    state.translation[0] += x
+    state.translation[1] += y
     canBeDirty && ctx.dirty()
   }
 
   function zoomCamera (amount) {
-    zoom = Math.max(limits.zoom[0], Math.min(limits.zoom[1], zoom + amount))
+    state.zoom = Math.max(limits.zoom[0], Math.min(limits.zoom[1], state.zoom + amount))
     canBeDirty && ctx.dirty()
   }
 
   function zoomToScreenPoint (x, y, amount) {
-    var ox = x / zoom
-    var oy = y / zoom
+    var ox = x / state.zoom
+    var oy = y / state.zoom
 
     zoomCamera(amount)
 
-    var nx = x / zoom
-    var ny = y / zoom
+    var nx = x / state.zoom
+    var ny = y / state.zoom
 
     translateCamera(nx - ox, ny - oy)
   }
@@ -98,7 +102,7 @@ function createCamera (ctx, eventContext, handlers) {
     mouse.deltaPos[0] = e.clientX - mouse.pos[0]
     mouse.deltaPos[1] = e.clientY - mouse.pos[1]
     if (mouse.down) {
-      translateCamera(mouse.deltaPos[0] / zoom, mouse.deltaPos[1] / zoom)
+      translateCamera(mouse.deltaPos[0] / state.zoom, mouse.deltaPos[1] / state.zoom)
     }
     mouse.pos[0] = e.clientX
     mouse.pos[1] = e.clientY
