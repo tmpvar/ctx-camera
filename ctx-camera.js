@@ -2,6 +2,7 @@ module.exports = createCamera
 
 function createCamera (ctx, eventContext, handlers) {
   eventContext = eventContext || window
+  handlers = handlers || {}
   var canBeDirty = typeof ctx.dirty === 'function'
 
   var limits = {
